@@ -2,8 +2,11 @@
 // compatible API routes.
 
 var express = require('express');
-var ParseServer = require('parse-server').ParseServer;
+var Parse = require('parse-server');
 var path = require('path');
+
+var ParseServer = Parse.ParseServer;
+var S3Adapter = Parse.S3Adapter;
 
 var databaseUri = process.env.DATABASE_URI || process.env.MONGODB_URI;
 
@@ -18,6 +21,12 @@ var api = new ParseServer({
   masterKey: process.env.MASTER_KEY || '', //Add your master key here. Keep it secret!
   serverURL: process.env.SERVER_URL || 'http://localhost:1337/parse',  // Don't forget to change to https if needed
   fileKey: process.env.FILE_KEY || '',
+  filesAdapter: new S3Adapter(
+    process.env.S3_ACCESS_KEY || '',
+    process.env.S3_SECRET_KEY || '',
+    process.env.S3_BUCKET || '',
+    { directAccess: true }
+  ),
 });
 // Client-keys like the javascript key or the .NET key are not necessary with parse-server
 // If you wish you require them, you can set them as options in the initialization above:
